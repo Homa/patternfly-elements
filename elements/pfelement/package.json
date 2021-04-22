@@ -2,29 +2,69 @@
   "name": "@patternfly/pfelement",
   "pfelement": {
     "className": "PFElement",
-    "elementName": "pfelement"
+    "elementName": "pfelement",
+    "assets": [
+      "pfelement.*css",
+      "pfelement.*css.map"
+    ],
+    "title": "Base Class",
+    "preview": "pfe-icon-blue-shaded.svg"
   },
-  "version": "1.0.0-prerelease.7",
+  "version": "1.5.1",
   "publishConfig": {
     "access": "public"
   },
-  "description": " element for PFElements",
+  "description": "Base class for PatternFly Elements",
+  "keywords": [
+    "web-components",
+    "html"
+  ],
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "github:patternfly/patternfly-elements",
+    "directory": "elements/pfelement"
   },
-  "main": "index.js",
+  "engines": {
+    "node": ">=10 <13"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "Firefox >= 78",
+    "iOS >= 8",
+    "ie 11"
+  ],
+  "main": "./dist/pfelement.umd.js",
+  "module": "./dist/pfelement.js",
+  "unpkg": "./dist/pfelement.umd.min.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "../../node_modules/.bin/gulp && ../../node_modules/.bin/prettier --ignore-path ../../.prettierignore --write '**/*.{js,json}'",
     "dev": "../../node_modules/.bin/gulp dev",
+    "watch": "../../node_modules/.bin/gulp watch",
     "test": "../../node_modules/.bin/wct --configFile ../../wct.conf.json elements/pfelement/test/"
   },
-  "author": {
-    "name": "Kyle Buchanan",
-    "email": "kylebuch8@gmail.com",
-    "url": "https://github.com/kylebuch8"
-  },
+  "contributors": [
+    {
+      "name": "Kyle Buchanan",
+      "email": "kylebuch8@gmail.com",
+      "url": "https://github.com/kylebuch8"
+    },
+    {
+      "name": "Michael Clayton"
+    },
+    {
+      "name": "castastrophe",
+      "url": "https://github.com/castastrophe"
+    }
+  ],
   "license": "MIT",
+  "devDependencies": {
+    "@patternfly/pfe-sass": "^1.5.1"
+  },
   "generator-pfelement-version": "0.3.4",
-  "gitHead": "dfa74e0495c556ebdd1edb61c6d406621d1b6421"
+  "bugs": {
+    "url": "https://github.com/patternfly/patternfly-elements/issues"
+  }
 }

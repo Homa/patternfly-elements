@@ -1,74 +1,48 @@
-const path = require("path");
-const fs = require("fs");
+const gulpFactory = require("../../scripts/gulpfile.factory.js");
+const pfelementPackage = require("./package.json");
+
+const { task, src, series } = require("gulp");
+const jsdoc = require("gulp-jsdoc3");
 const del = require("del");
 
-const gulp = require("gulp");
-const shell = require("gulp-shell");
-const rename = require("gulp-rename");
-const replace = require("gulp-replace");
-const cleanCSS = require("gulp-clean-css");
-const trim = require("gulp-trim");
-const banner = require("gulp-banner");
-
-gulp.task("clean", () => {
-  return del(["pfelement.js", "./**/*.umd.*", "./*.css", "./*.js.map"]);
-});
-
-gulp.task("compile", () => {
-  return gulp
-    .src(["./pfelement.js", "./reveal.js"])
-    .pipe(
-      replace(
-        /^(import .*?)(['"]\.\.?\/(?!\.\.\/).*)(\.js['"];)$/gm,
-        "$1$2.umd$3"
-      )
-    )
-    .pipe(
-      rename({
-        suffix: ".umd"
-      })
-    )
-    .pipe(gulp.dest("./"));
-});
-
-gulp.task("copy", () => {
-  return gulp
-    .src(["./src/*"])
-    .pipe(
-      banner(
-        `/*\n${fs
-          .readFileSync("LICENSE.txt", "utf8")
-          .split("\n")
-          .map(line => ` * ${line}\n`)
-          .join("")}*/\n\n`
-      )
-    )
-    .pipe(gulp.dest("./"));
-});
-
-gulp.task("minify-css", () => {
-  return gulp
-    .src("./src/*.css")
-    .pipe(cleanCSS())
-    .pipe(
-      rename({
-        suffix: ".min"
-      })
-    )
-    .pipe(gulp.dest("./"));
-});
-
-gulp.task("watch", () => {
-  return gulp.watch("./src/**/*", gulp.series("build"));
-});
-
-gulp.task("bundle", shell.task("../../node_modules/.bin/rollup -c"));
-
-gulp.task(
-  "build",
-  gulp.series("clean", "copy", "compile", "minify-css", "bundle")
+task("clean:jsdoc", () =>
+  del(["demo/**", "!demo/example.html"], {
+    read: false,
+    allowEmpty: true
+  })
 );
 
-gulp.task("default", gulp.series("build"));
+task("build:jsdoc", cb => {
+  src(["README.md", "dist/pfelement.js"], {
+    read: false,
+    allowEmpty: true
+  }).pipe(
+    jsdoc(
+      {
+        opts: {
+          destination: "demo/",
+          template: "../../node_modules/foodoc/template"
+        },
+        // https://github.com/steveush/foodoc#configuring-the-template
+        templates: {
+          systemName: "PatternFly Elements",
+          systemSummary: "A set of community-created web components based on PatternFly design.",
+          systemLogo: "../../brand/logo/svg/pfe-icon-white-shaded.svg",
+          favicon: "../../brand/logo/svg/pfe-icon-blue-shaded.svg",
+          systemColor: "rgb(0, 64, 128)",
+          copyright: "©2021 Red Hat, Inc.",
+          includeDate: true,
+          dateFormat: "YYYY MMM DD",
+          showAccessFilter: false,
+          collapseSymbols: false,
+          stylesheets: ["../pfe-styles/dist/pfe-base.min.css"]
+        }
+      },
+      cb
+    )
+  );
+});
 
-gulp.task("dev", gulp.series("build", "watch"));
+task("jsdoc", series("clean:jsdoc", "build:jsdoc"));
+
+gulpFactory(Object.assign(pfelementPackage, { postbundle: ["jsdoc"] }));

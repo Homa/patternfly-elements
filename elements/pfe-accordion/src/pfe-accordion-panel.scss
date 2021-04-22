@@ -1,15 +1,14 @@
-@import "../../pfe-sass/pfe-sass";
+@import "shared-assets";
+
+/// ===========================================================================
+/// DEFAULT ACCORDION PANEL
+/// ===========================================================================
 
 :host {
-  display: none;
-  overflow: hidden;
-  background: #{pfe-color(surface--lightest)};
-  will-change: height;
-}
-
-:host([expanded]) {
-  display: block;
-  position: relative;
+   @include pfe-collapsible($state: closed);
+   @include pfe-accordion-props;
+   @include pfe-box-sizing;
+   box-sizing: border-box;
 }
 
 :host(.animating) {
@@ -18,8 +17,49 @@
 }
 
 .container {
-  margin: 0 1px; // align with 1px margin on header
-  border: 1px solid #{pfe-color(surface--border--lightest)};
-  border-top: none;
-  padding: #{pfe-var(container-spacer)};
+  @include pfe-clearfix;
+  @include pfe-panel-container;
+  padding: pfe-local(Padding, $region: panel-container, $fallback: 0 pfe-local(Padding, $region: panel, $fallback: calc(#{pfe-local(Padding, $region: base)} * 3)) pfe-local(Padding, $region: base) pfe-local(Padding, $region: panel, $fallback: calc(#{pfe-local(Padding, $region: base)} * 1.5)));
+  :host([disclosure="true"]) & {
+    padding: pfe-local(Padding, $region: panel-container, $fallback: pfe-local(Padding, $region: panel, $fallback: calc(#{pfe-local(Padding, $region: base)} * 1.5)));
+  }
+  pfe-jump-links-nav & {
+    padding: pfe-local(Padding, $region: panel-container, $fallback: 0);
+    --pfe-accordion__panel-container--Padding: 0;
+    @media (max-width: pfe-breakpoint(md, $max: true)) {
+      padding: pfe-local(Padding, $region: panel-container, $fallback: 0);
+    }
+  }
+}
+
+:host(:last-of-type[expanded]) {
+  margin-bottom: 0;
+}
+
+/// ===========================================================================
+/// EXPANDED STYLES
+/// ===========================================================================
+
+:host([expanded]),
+:host(.animating) {
+  @include pfe-print-local(pfe-accordion-variables($state: expanded));
+  @include pfe-panel-variables;
+  @include pfe-collapsible($state: open);
+  @include browser-query(ie11) {
+    border-top-width: 0;
+    border-left-color: pfe-var(ui-accent);
+    border-right-color: pfe-var(surface--border);
+  }
+}
+
+:host([on="dark"][expanded]),
+:host([on="dark"].animating){
+  @include pfe-print-local(pfe-accordion-variables($state: expanded, $context: dark));
+  @include pfe-panel-variables($context: dark);
+}
+
+:host([on="saturated"][expanded]),
+:host([on="saturated"].animating){
+  @include pfe-print-local(pfe-accordion-variables($state: expanded, $context: saturated));
+  @include pfe-panel-variables($context: saturated);
 }

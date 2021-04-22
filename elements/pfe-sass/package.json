@@ -2,13 +2,39 @@
   "name": "@patternfly/pfe-sass",
   "pfelement": {
     "className": "PfeSass",
-    "elementName": "pfe-sass"
+    "elementName": "pfe-sass",
+    "title": "Sass tooling",
+    "preview": "sass--screenshot.png"
   },
-  "version": "1.0.0-prerelease.7",
+  "version": "1.5.1",
   "publishConfig": {
     "access": "public"
   },
-  "description": "Sass variables and mixins for pfe-elements",
+  "description": "Sass variables and mixins for PatternFly Elements",
+  "keywords": [
+    "web-components",
+    "html"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "github:patternfly/patternfly-elements",
+    "directory": "elements/pfe-sass"
+  },
+  "engines": {
+    "node": ">=10 <13"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "Firefox >= 78",
+    "iOS >= 8",
+    "ie 11"
+  ],
+  "main": "./pfe-sass.scss",
+  "scripts": {
+    "build": "../../node_modules/.bin/gulp",
+    "dev": "../../node_modules/.bin/gulp dev",
+    "watch": "../../node_modules/.bin/gulp watch"
+  },
   "contributors": [
     {
       "name": "Kyle Buchanan",
@@ -19,8 +45,23 @@
       "name": "Mark Caron",
       "email": "mark@redhat.com",
       "url": "https://github.com/markcaron"
+    },
+    {
+      "name": "castastrophe",
+      "url": "https://github.com/castastrophe"
+    },
+    {
+      "name": "Kendall Totten"
+    },
+    {
+      "name": "cd"
     }
   ],
   "license": "MIT",
-  "gitHead": "dfa74e0495c556ebdd1edb61c6d406621d1b6421"
+  "bugs": {
+    "url": "https://github.com/patternfly/patternfly-elements/issues"
+  },
+  "dependencies": {
+    "@patternfly/patternfly": "^4.23.3"
+  }
 }

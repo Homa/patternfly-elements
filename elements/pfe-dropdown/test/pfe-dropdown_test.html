@@ -5,23 +5,37 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <script src="/components/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
     <script src="/components/web-component-tester/browser.js"></script>
-    <script type="module" src="../pfe-dropdown.js"></script>
+    <script type="module" src="../dist/pfe-dropdown.js"></script>
   </head>
   <body>
 
-    <pfe-dropdown>
-      This is the element content.
+    <pfe-dropdown label="Test dropdown">
+      <pfe-dropdown-item item-type="link">
+        <a href="#">Link 1</a>
+      </pfe-dropdown-item>
+      <pfe-dropdown-item item-type="link">
+        <a href="#">Link 2</a>
+      </pfe-dropdown-item>
+      <pfe-dropdown-item item-type="separator"></pfe-dropdown-item>
+      <pfe-dropdown-item item-type="action">
+        <button>Action 1</button>
+      </pfe-dropdown-item>
+      <pfe-dropdown-item item-type="action" id="disabledItem" disabled>
+        <button>Action 2</button>
+      </pfe-dropdown-item>
     </pfe-dropdown>
 
-    <script>
-      suite('<pfe-dropdown>', () => {
-        test('it should upgrade', () => {
-          assert.instanceOf(document.querySelector('pfe-dropdown'), customElements.get("pfe-dropdown", 'pfe-dropdown should be an instance of pfeDropdown'));
-        });
+    <pfe-dropdown label="Test disabled dropdown" id="disabledDropdown" disabled>
+      <pfe-dropdown-item item-type="link">
+        <a href="#">Link 1</a>
+      </pfe-dropdown-item>
+    </pfe-dropdown>
 
-        // you need to write more tests!!!
+    <pfe-dropdown label="Test dropdown with custom options" id="customDropdown">
+    </pfe-dropdown>
 
-      });
-    </script>
+    <input type="checkbox" id="checkbox"/>
+
+    <script src="pfe-dropdown_test.js"></script>
   </body>
 </html>

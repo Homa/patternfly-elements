@@ -1,38 +1,26 @@
-// $boxSize = any box-sizing property, default is border-box
-@mixin pfe-box-sizing($boxSize: border-box) {
-  *, *::before, *::after {
-    box-sizing: $boxSize;
+@mixin browser-query($browser-list) {
+  @each $browser in $browser-list {
+    @if $browser == ie11 {
+      @media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) { /* IE10+ */
+        @content;
+      }
+    }
+    @if $browser == edge12 {
+      @supports (-ms-accelerator: true) { /* Microsoft Edge Browser 12+ */
+        @content;
+      }
+    }
+    @if $browser == edge {
+      @supports (-ms-ime-align: auto) { /* Microsoft Edge Browser 16+ (All) */
+        @content;
+      }
+    }
+    @if $browser == firefox {
+      @media all and (min--moz-device-pixel-ratio:0) { /* Mozilla Firefox (All) */
+        @content;
+      }
+    }
   }
-}
-
-@mixin pfe-clearfix {
-  &::after {
-    clear: both;
-    content: "";
-    display: table;
-  }
-}
-
-@mixin pfe-reset-list() {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-@mixin pfe-reset-box() {
-  margin: 0;
-  padding: 0;
-}
-
-@mixin pfe-sr-only() {
-  position: absolute;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  height: 1px;
-  width: 1px;
-  margin: -1px;
-  padding: 0;
-  border: 0;
 }
 
 @mixin pfe-transition($properties...) {
@@ -56,7 +44,7 @@
     right: -90deg,
     left: 90deg,
   );
-  border-style: solid;
+  border-style: pfe-var(surface--border-style);
   border-width: $width $height 0;
   border-color: transparent;
   border-top-color: $color;
@@ -82,18 +70,23 @@
   -webkit-print-color-adjust: exact;
   color-adjust: exact;
 }
-// scss-lint:disable ImportantRule
+
 @mixin pfe-no-print-background {
-  @include print-media {
+  @include pfe-print-media {
     background-color: white !important;
     background-image: none !important;
     box-shadow: none !important;
   }
 }
-// scss-lint:enable ImportantRule
+
+@mixin pfe-hidden {
+  @at-root #{&}([hidden]) {
+    display: none;
+  }
+}
 
 @mixin pfe-pipe( $position: right, $padding: 0, $margin: 0, $color: $border-color) {
-  border: 1px solid transparent;
+  border: pfe-var(surface--border-width) pfe-var(surface--border-style) transparent;
   border-#{$position}-color: $color;
   @if $position == right {
     padding-left: $padding;
@@ -111,34 +104,20 @@
   }
 }
 
-
-/// RH Define Vars
-/// Helps define the CSS Var madness, making it easier for devs!
-/// @param {String} $this-component-var - Component specific variable name
-/// @param {String} $this-theme-var - Theme variable name
-/// @param {String} $this-fallback - Fallback color
-///
-/// ---------------------------------------------------------------------------
-///
-/// SASS fallback based on PFElements style
-/// $pfe-global[--context][--state][--PropertyCamelCase]
-
-/// Theme level Var
-/// --pfe-theme[--context][--state][--PropertyCamelCase]
-/// --pfe-theme--heading--hover--BackgroundColor
-
-/// Component Var for theming specific cases
-/// --pfe-[component-block][__element][--context][--state][--PropertyCamelCase]
-/// --pfe-teaser__title--link-color--visited
-/// --pfe-teaser__subtitle--link-color--visited
-
-/// Defined locally for sanity
-/// --pfe-local-[component-block][__element][--context][--state][--PropertyCamelCase]
-/// --pfe-local-cta--link-color--inverted
-///
-/// ---------------------------------------------------------------------------
-///
-///                     ↓ component,         ↓ theme,         ↓ fallback
-@mixin pfe-define-vars($this-component-var, $this-theme-var, $this-fallback) {
-  --pfe-local-#{$this-component-var}: var(--pfe-#{$this-component-var}, var(--pfe-theme--#{$this-theme-var}, #{$this-fallback}));
+@mixin pfe-icon($path, $display: flex, $size: 1em) {
+  display: #{$display};
+  @if $path {
+    background: #{$path} no-repeat;
+    background-size: contain;
+    background-position: center;
+  }
+  width: #{$size};
+  height: #{$size};
+  @content;
 }
+
+@mixin pfe-local-debug($map: $LOCAL-VARIABLES) {
+  :root {
+      @include pfe-print-local($map);
+  }
+} 

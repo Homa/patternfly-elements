@@ -1,11 +1,19 @@
-import { configure } from "@storybook/polymer";
-import { setOptions } from "@storybook/addon-options";
+import { configure, addParameters } from "@storybook/polymer";
+
+import "./custom-theme.css";
+
 const req = require.context("../elements", true, /\.story\.js$/);
 
-setOptions({
-  name: "PatternFly Elements",
-  url: "/",
-  addonPanelInRight: true
+// Theming doc: https://github.com/storybookjs/storybook/blob/next/docs/src/pages/configurations/theming/index.md
+// Parameters: https://github.com/storybookjs/storybook/blob/next/docs/src/pages/configurations/options-parameter/index.md
+addParameters({
+  options: {
+    panelPosition: "right",
+    theme: {
+      brandTitle: "PatternFly Elements",
+      brandUrl: "/"
+    }
+  }
 });
 
 function loadStories() {

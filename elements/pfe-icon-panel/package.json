@@ -2,31 +2,61 @@
   "name": "@patternfly/pfe-icon-panel",
   "pfelement": {
     "className": "PfeIconPanel",
-    "elementName": "pfe-icon-panel"
+    "elementName": "pfe-icon-panel",
+    "preview": "icon-panel--screenshot.png"
   },
-  "version": "1.0.0-prerelease.7",
+  "version": "1.5.1",
   "publishConfig": {
     "access": "public"
   },
-  "description": "Icon element for PFElements",
+  "description": "Icon panel for PatternFly Elements",
+  "keywords": [
+    "web-components",
+    "html"
+  ],
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "github:patternfly/patternfly-elements",
+    "directory": "elements/pfe-icon-panel"
   },
-  "main": "index.js",
+  "engines": {
+    "node": ">=10 <13"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "Firefox >= 78",
+    "iOS >= 8",
+    "ie 11"
+  ],
+  "main": "./dist/pfe-icon-panel.umd.js",
+  "module": "./dist/pfe-icon-panel.js",
+  "unpkg": "./dist/pfe-icon-panel.umd.min.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "../../node_modules/.bin/gulp && ../../node_modules/.bin/prettier --ignore-path ../../.prettierignore --write '**/*.{js,json}'",
     "dev": "../../node_modules/.bin/gulp dev",
+    "watch": "../../node_modules/.bin/gulp watch",
     "test": "../../node_modules/.bin/wct --configFile ../../wct.conf.json elements/pfe-icon-panel/test/"
   },
-  "author": {
-    "name": "Mark Caron"
-  },
+  "contributors": [
+    {
+      "name": "Mark Caron",
+      "email": "mark@redhat.com",
+      "url": "https://github.com/markcaron"
+    }
+  ],
   "license": "MIT",
+  "devDependencies": {
+    "@patternfly/pfe-sass": "^1.5.1"
+  },
   "dependencies": {
-    "@patternfly/pfe-sass": "^1.0.0-prerelease.7",
-    "@patternfly/pfelement": "^1.0.0-prerelease.7"
+    "@patternfly/pfe-icon": "^1.5.1",
+    "@patternfly/pfelement": "^1.5.1"
   },
   "generator-pfelement-version": "0.5.0",
-  "gitHead": "dfa74e0495c556ebdd1edb61c6d406621d1b6421"
+  "bugs": {
+    "url": "https://github.com/patternfly/patternfly-elements/issues"
+  }
 }

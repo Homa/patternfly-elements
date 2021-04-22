@@ -1,5 +1,5 @@
-import PFElement from "../pfelement/pfelement.js";
-import "../pfe-icon/pfe-icon.js";
+import PFElement from "../../pfelement/dist/pfelement.js";
+import "../../pfe-icon/dist/pfe-icon.js";
 
 class PfeIconPanel extends PFElement {
   static get tag() {
@@ -14,14 +14,66 @@ class PfeIconPanel extends PFElement {
     return "pfe-icon-panel.html";
   }
 
-  static get observedAttributes() {
-    return ["icon", "circled"];
+  get schemaUrl() {
+    return "pfe-icon-panel.json";
   }
 
-  static get cascadingAttributes() {
+  static get properties() {
     return {
-      icon: "pfe-icon",
-      circled: "pfe-icon"
+      icon: {
+        title: "Icon",
+        type: String,
+        attr: "icon",
+        cascade: ["pfe-icon"]
+      },
+      circled: {
+        title: "Circled",
+        type: Boolean,
+        cascade: ["pfe-icon"]
+      },
+      oldCircled: {
+        alias: "circled",
+        attr: "pfe-circled"
+      },
+      color: {
+        title: "Color",
+        type: String,
+        values: [
+          "complement",
+          "accent",
+          "lightest",
+          "base",
+          "darker",
+          "darkest",
+          "critical",
+          "important",
+          "moderate",
+          "success",
+          "info"
+        ],
+        default: "darker",
+        cascade: ["pfe-icon"]
+      },
+      oldColor: {
+        alias: "color",
+        attr: "pfe-color"
+      },
+      stacked: {
+        title: "Stacked",
+        type: Boolean
+      },
+      oldStacked: {
+        alias: "stacked",
+        attr: "pfe-stacked"
+      },
+      centered: {
+        title: "Centered",
+        type: Boolean
+      },
+      oldCentered: {
+        alias: "centered",
+        attr: "pfe-centered"
+      }
     };
   }
 
@@ -31,3 +83,5 @@ class PfeIconPanel extends PFElement {
 }
 
 PFElement.create(PfeIconPanel);
+
+export default PfeIconPanel;

@@ -1,169 +1,201 @@
 @import "../../pfe-sass/pfe-sass";
+@include pfe-contexts;
 
+$LOCAL: icon;
+
+$LOCAL-VARIABLES: (
+  context: light,
+  size: pfe-var(icon-size),
+  spacing: pfe-var(container-spacer),
+  Padding: 0,
+  BackgroundColor: transparent,
+  BorderWidth: 0,
+  // Legacy variable for changing icon color
+  Color: pfe-broadcasted(text),
+);
+
+// Nested internal variables (pfe-local calls), maps cannot "self-reference"
+$LOCAL-VARIABLES: map-deep-merge($LOCAL-VARIABLES, (
+  // Current variable for updating icon color
+  color: pfe-local(Color),
+));
+
+// Nested internal variables (pfe-local calls), maps cannot "self-reference"
+$LOCAL-VARIABLES: map-deep-merge($LOCAL-VARIABLES, (
+  BorderColor: pfe-local(color),
+));
 
 /// ===========================================================================
 /// Component Specific SASS Vars
 /// ===========================================================================
 
-// Todo: convert these also
-$pfe-icon--size:                             1em;
-$pfe-icon--padding:                          .05em;
-$pfe-icon--border-width:                     map-get($pfe-vars, border-width);
-$pfe-icon--border-style:                     map-get($pfe-vars, border-style);
+@mixin greyscale-fallback() {
+  background-color: white !important;
 
-
-/// ===========================================================================
-/// DEFUALT CTA
-/// ===========================================================================
-
-@mixin pfe-icon-set-svg-size($size: 1em) {
-  &,
-  & svg {
-    width: $size;
-    height: $size;
+  & svg filter feFlood {
+      flood-color: black !important;
   }
 }
 
 :host {
-  --pfe-icon--spacing:                 #{pfe-var(container-spacer)};
-  --pfe-icon--size:                    var(--pfe-theme--icon-size, 1em);
-  --pfe-icon--color--bg:               transparent;
-  --pfe-icon--color--border:           transparent;
+  --context: #{pfe-local(context)};
 
-  display: inline-block;
-  vertical-align: middle;
-  @include pfe-icon-set-svg-size(1em);
-  border-radius: 50%;
-  background: var(--pfe-icon--color--bg);
-  border: $pfe-icon--border-width $pfe-icon--border-style var(--pfe-icon--color--border);
+  position: relative;
+  display:  inline-block;
 
-  svg {
-    fill: var(--pfe-broadcasted--color--text);
-  }
+  // Content-box model supports sizing while preserving aspect ratio (despite layout)
+  box-sizing: content-box!important;
+  max-width:   pfe-local(size);
+  width:       fit-content !important;
+  max-height:  pfe-local(size);
+  height:      fit-content !important;
+  line-height: 0;
 
-  @at-root #{&}([data-block]) {
+  @at-root #{&}([block]) {
     display: block;
-    margin-bottom: var(--pfe-icon--spacing);
-    margin-top: var(--pfe-icon--spacing);
+    margin-bottom: pfe-local(spacing);
+    margin-top:    pfe-local(spacing);
 
     &:first-child {
       margin-top: 0;
     }
   }
+
+  svg {
+    width:  pfe-local(size);
+    height: pfe-local(size);
+  }
 }
 
-:host([size="2x"]) {
-  @include pfe-icon-set-svg-size(2em);
+:host(:not(.load-failed)) {
+  vertical-align: middle;
+  border-radius: 50%;
+  background-color: pfe-local(BackgroundColor);
+  border: pfe-local(BorderWidth) pfe-var(ui--border-style) pfe-local(BorderColor);
+  padding: pfe-local(Padding);
+
+  @include browser-query(ie11) {
+      @include greyscale-fallback();
+  }
+
+
+  // Edge 12+ CSS
+  @include browser-query(edge12) {
+      @include greyscale-fallback();
+  }
+
+  svg image {
+    @include browser-query(ie11) {
+      filter: none;
+    }
+  }
+
+  filter feFlood {
+    flood-color: pfe-local(color);
+  }
+
+  .pfe-icon--fallback {
+    display: none;
+  }
 }
 
-:host([size="3x"]) {
-  @include pfe-icon-set-svg-size(3em);
+@for $num from 2 through 4 {
+  :host([size="#{$num}x"]) {
+    --pfe-icon--size: #{$num}em;
+  }
 }
 
-:host([size="4x"]) {
-  @include pfe-icon-set-svg-size(4em);
+$sizing: (
+  xl: 100px,
+  lg: 64px,
+  md: 32px,
+  sm: 14px
+);
+
+// @TODO: Sort out sizing
+@each $label, $size in $sizing {
+  :host([size="#{$label}"]) {
+    // Respect var if user set CSS var, but fallback to sizing property map
+    $desired-size: pfe-local(size, $fallback: $size);
+    max-width:   $desired-size;
+    max-height:  $desired-size;
+
+    svg {
+      width:  $desired-size;
+      height: $desired-size;
+    }
+  }
 }
 
-// TODO: Sort out sizing
-:host([size="xl"]) {
-  @include pfe-icon-set-svg-size(100px);
+@each $level in (critical, important, moderate, success, info, default) {
+  :host([color="#{$level}"]) {
+    filter feFlood {
+      flood-color: pfe-local(
+        color,
+        $fallback: pfe-var(feedback--#{$level})
+      );
+    }
+    @if $level != "moderate" {
+      --pfe-icon--context: dark;
+    }
+  }
 }
 
-:host([size="lg"]) {
-  @include pfe-icon-set-svg-size(64px);
-}
+@each $color in (lightest, base, darker, darkest, complement, accent) {
+  :host([color="#{$color}"]) {
+    --pfe-icon--context: #{pfe-var(surface--#{$color}--context)};
 
-:host([size="md"]) {
-  @include pfe-icon-set-svg-size(32px);
-}
-
-:host([size="sm"]) {
-  @include pfe-icon-set-svg-size(14px);
-}
-
-:host([color="base"]) {
-  --pfe-broadcasted--color--text:      #{pfe-color(ui-base)};
-}
-
-:host([color="complement"]) {
-  --pfe-broadcasted--color--text:      #{pfe-color(ui-complement)};
-}
-
-:host([color="accent"]) {
-  --pfe-broadcasted--color--text:      #{pfe-color(ui-accent)};
-}
-
-:host([color="critical"]) {
-  --pfe-broadcasted--color--text:      #{pfe-color(feedback--critical)};
-}
-
-:host([color="important"]) {
-  --pfe-broadcasted--color--text:      #{pfe-color(feedback--important)};
-}
-
-:host([color="moderate"]) {
-  --pfe-broadcasted--color--text:      #{pfe-color(feedback--moderate)};
-}
-
-:host([color="success"]) {
-  --pfe-broadcasted--color--text:      #{pfe-color(feedback--success)};
-}
-
-:host([color="info"]) {
-  --pfe-broadcasted--color--text:      #{pfe-color(feedback--info)};
-}
-
-:host([color="default"]) {
-  --pfe-broadcasted--color--text:      #{pfe-color(feedback--default)};
+    filter feFlood {
+      flood-color: pfe-local(
+        color,
+        $fallback: pfe-var(surface--#{$color})
+      );
+    }
+  }
 }
 
 // May need Feedback Darkest colors too.
 
-:host([circled]) {
-  --pfe-icon--color--bg:               transparent;
-  --pfe-icon--color--border:           #{pfe-color(surface--border)};
+:host([circled]:not([circled="false"])) {
+  padding: pfe-local(Padding, $fallback: .5em);
+  border-width: pfe-local(BorderWidth, $fallback: pfe-var(ui--border-width));
+  border-color: pfe-local(color, $fallback: pfe-var(surface--border));
+  background-color: pfe-local(BackgroundColor, pfe-local(color, $fallback: pfe-var(surface--lightest)));
 
-  padding: $pfe-icon--padding;
+  filter feFlood {
+    flood-color: pfe-local(color);
+  }
 }
 
-:host([circled="base"]) {
-  --pfe-icon--color--bg:               #{pfe-color(surface--base)};
-  --pfe-icon--color--border:           transparent;
-  --pfe-broadcasted--color--text:      #{pfe-color(surface--base--text)};
+/**
+ * Override circled items with color set to named property
+ */
+@each $color in (lightest, base, darker, darkest, complement, accent) {
+  :host([color=#{$color}][circled]:not([circled="false"])) {
+    // Respect var if user set CSS var, but fallback to property
+    $desired-color: pfe-local(color, $fallback: pfe-var(surface--#{$color}));
+    background-color: $desired-color;
+    border-color: $desired-color;
+  }
+}
+@each $level in (critical, important, moderate, success, info, default) {
+  :host([color="#{$level}"][circled]:not([circled="false"])) {
+    // Respect var if user set CSS var, but fallback to property
+    $desired-color: pfe-local(backgroundColor, $fallback: pfe-var(feedback--#{$level}));
+    background-color: $desired-color;
+    border-color: $desired-color;
+  }
 }
 
-:host([circled="lightest"]) {
-  --pfe-icon--color--bg:               #{pfe-color(surface--lightest)};
-  --pfe-icon--color--border:           transparent;
-  --pfe-broadcasted--color--text:      #{pfe-color(surface--lightest--text)};
+:host(.load-failed) svg image {
+  display: none;
 }
 
-:host([circled="light"]) {
-  --pfe-icon--color--bg:               #{pfe-color(surface--lighter)};
-  --pfe-icon--color--border:           transparent;
-  --pfe-broadcasted--color--text:      #{pfe-color(surface--lighter--text)};
+:host(.load-failed.has-fallback) svg,
+:host(.load-failed[on-fail="collapse"]) svg {
+  display: none;
 }
 
-:host([circled="dark"]) {
-  --pfe-icon--color--bg:               #{pfe-color(surface--darker)};
-  --pfe-icon--color--border:           transparent;
-  --pfe-broadcasted--color--text:      #{pfe-color(surface--darker--text)};
-}
-
-:host([circled="darkest"]) {
-  --pfe-icon--color--bg:               #{pfe-color(surface--darkest)};
-  --pfe-icon--color--border:           transparent;
-  --pfe-broadcasted--color--text:      #{pfe-color(surface--darkest--text)};
-}
-
-:host([circled="complement"]) {
-  --pfe-icon--color--bg:               #{pfe-color(surface--complement)};
-  --pfe-icon--color--border:           transparent;
-  --pfe-broadcasted--color--text:      #{pfe-color(surface--complement--text)};
-}
-
-:host([circled="accent"]) {
-  --pfe-icon--color--bg:               #{pfe-color(surface--accent)};
-  --pfe-icon--color--border:           transparent;
-  --pfe-broadcasted--color--text:      #{pfe-color(surface--accent--text)};
+:host(.load-failed[on-fail="collapse"]) {
+  --pfe-icon--size: 0;
 }
